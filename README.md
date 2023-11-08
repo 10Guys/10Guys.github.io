@@ -134,7 +134,7 @@
         }
 
         player.addEventListener("click", function() {
-            const newTextureUrl = prompt("https://media.tenor.com/mkaIYIbmFvYAAAAi/police-bear.gif");
+            const newTextureUrl = url('https://media.tenor.com/mkaIYIbmFvYAAAAi/police-bear.gif');
             if (newTextureUrl) {
                 changeTexture(newTextureUrl);
             }
