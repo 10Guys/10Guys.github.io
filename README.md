@@ -77,19 +77,40 @@
         <div id="player" class="sprite"></div>
     </div>
     <script>
-        // Initialize the player sprite
         const player = document.getElementById("player");
         player.style.backgroundColor = "#ff0000"; // Initial texture
 
-        // Function to move the player sprite
         function movePlayer(event) {
-            const x = event.clientX - player.clientWidth / 2;
-            const y = event.clientY - player.clientHeight / 2;
-            player.style.left = `${x}px`;
-            player.style.top = `${y}px`;
+            const mouseX = event.clientX - player.clientWidth / 2;
+            const mouseY = event.clientY - player.clientHeight / 2;
+
+            const sprites = document.querySelectorAll(".sprite");
+            let nearestSprite = null;
+            let minDistance = Number.MAX_VALUE;
+
+            // Find the nearest sprite
+            sprites.forEach(sprite => {
+                const rect1 = player.getBoundingClientRect();
+                const rect2 = sprite.getBoundingClientRect();
+                const distance = Math.sqrt(Math.pow(rect1.left - rect2.left, 2) + Math.pow(rect1.top - rect2.top, 2));
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestSprite = sprite;
+                }
+            });
+
+            // Smoothly interpolate the player's position towards the nearest sprite
+            const easing = 0.1;
+            const targetX = mouseX - player.clientWidth / 2;
+            const targetY = mouseY - player.clientHeight / 2;
+            const dx = targetX - parseFloat(player.style.left);
+            const dy = targetY - parseFloat(player.style.top);
+
+            player.style.left = `${parseFloat(player.style.left) + dx * easing}px`;
+            player.style.top = `${parseFloat(player.style.top) + dy * easing}px`;
 
             // Check for collision with other sprites and "delete" them
-            const sprites = document.querySelectorAll(".sprite");
             sprites.forEach(sprite => {
                 if (sprite !== player && isColliding(player, sprite)) {
                     sprite.remove();
@@ -97,7 +118,6 @@
             });
         }
 
-        // Function to check for collision between two elements
         function isColliding(element1, element2) {
             const rect1 = element1.getBoundingClientRect();
             const rect2 = element2.getBoundingClientRect();
@@ -109,20 +129,17 @@
             );
         }
 
-        // Change the player sprite texture through a URL
         function changeTexture(textureUrl) {
             player.style.backgroundImage = `url('${textureUrl}')`;
         }
 
-        // Add a click event to change the player's texture
         player.addEventListener("click", function() {
-            const newTextureUrl = prompt("Enter the URL of a new texture image:");
+            const newTextureUrl = prompt("https://media.tenor.com/mkaIYIbmFvYAAAAi/police-bear.gif");
             if (newTextureUrl) {
                 changeTexture(newTextureUrl);
             }
         });
 
-        // Add mousemove event to move the player
         document.addEventListener("mousemove", movePlayer);
     </script>
 </body>
